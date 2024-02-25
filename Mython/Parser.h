@@ -10,6 +10,7 @@
 #include "Integer.h"
 #include "String.h"
 #include "SyntaxException.h"
+#include "List.h"
 
 class Parser
 {
@@ -22,6 +23,7 @@ private:
     static bool isLegalVarName(std::string str);
     static bool makeAssignment(std::string str);
     static Type* getVariableValue(std::string str);
+    static List* parseList(std::string str);
     
 
 };

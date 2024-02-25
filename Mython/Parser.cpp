@@ -71,11 +71,23 @@ Type* Parser::getType(std::string str)
 	{
 		return new String(str);
 	}
+	else if (Helper::isList(str) == true) {
+		try
+		{
+			return parseList(str);
+		}
+		catch (...)
+		{
+			return nullptr;
+		}
+	}
 	else
 	{
 		return nullptr;
 	}
 }
+
+
 
 void Parser::cleanVers()
 {
@@ -166,6 +178,51 @@ Type* Parser::getVariableValue(std::string str)
 		return nullptr;
 	}
 	return _veriables[str];
+}
+
+List* Parser::parseList(std::string str)
+{
+	List* newObList = new List(false);
+	std::string toParse = str.substr(1, str.size() - 2);
+	std::vector<std::string> res;
+	size_t pos = 0;
+
+	while (pos < toParse.size()) 
+	{
+		// Find the position of the comma
+		size_t found = toParse.find(",", pos);
+
+		// Check if the delimiter is found
+		if (found != std::string::npos) {
+			std::string newVer = toParse.substr(pos, found - pos);
+			Helper::trim(newVer);
+			res.push_back(newVer);
+
+			// Move the position after the delimiter
+			pos = found + 1;
+		}
+		else {
+			// If no more delimiters are found, process the remaining part
+			std::string newVer = toParse.substr(pos);
+			Helper::trim(newVer);
+			res.push_back(newVer);
+
+			// Exit the loop
+			break;
+		}
+	}
+
+
+	for (int i = 0; i < res.size(); i++)
+	{
+		newObList->_seq.push_back(getType(res[i]));
+		if (newObList->_seq[i] == nullptr) {
+			throw SyntaxException();
+		}
+	}
+
+	return newObList;
+
 }
 
 

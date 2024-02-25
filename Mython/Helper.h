@@ -15,6 +15,9 @@ public:
 	// check if the parameter is valid String value
 	static bool isString(const std::string& s);
 
+	// check if the parameter is valid list value
+	static bool isList(const std::string& s);
+
 	// check if the parameter is digit
 	static bool isDigit(const char c);
 

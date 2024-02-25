@@ -38,6 +38,18 @@ bool Helper::isString(const std::string& s)
 
 }
 
+bool Helper::isList(const std::string& s)
+{
+	size_t end = s.size() - 1;
+
+	if (s[0] == '[' && end == s.find(']', 1))
+	{
+		return true;
+	}
+
+	return false;
+}
+
 bool Helper::isDigit(const char c)
 {
 	return (c >= '0' && c <= '9');
