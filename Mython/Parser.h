@@ -24,6 +24,7 @@ private:
     static bool makeAssignment(std::string str);
     static Type* getVariableValue(std::string str);
     static List* parseList(std::string str);
+    static std::string getTypeOfValue(const std::string& str);
     
 
 };

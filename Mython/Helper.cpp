@@ -55,6 +55,17 @@ bool Helper::isDigit(const char c)
 	return (c >= '0' && c <= '9');
 }
 
+bool Helper::isType(const std::string& s)
+{
+	size_t end = s.size() - 1;
+
+	if (s.substr(0, 5) == "type(" && s[end] == ')')
+	{
+		return true;
+	}
+	return false;
+}
+
 void Helper::trim(std::string &str)
 {
 	rtrim(str);

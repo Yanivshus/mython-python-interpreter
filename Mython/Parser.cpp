@@ -12,6 +12,7 @@ Type* Parser::parseString(std::string str)
 {
 	if (str.length() > 0)
 	{
+		//checking for tab or space in the start.
 		if (str.front() == '	' || str.front() == ' ') 
 		{
 			throw IndentationException();
@@ -25,12 +26,16 @@ Type* Parser::parseString(std::string str)
 				{
 					std::cout << getVariableValue(str)->toString() << std:: endl;
 				}
+				else if(Helper::isType(str) == true)//checking if the function type is called.
+				{
+					std::cout << getTypeOfValue(str) << std::endl;
+				}
 				else if (isAssignable == false) // if the assigment doesnt work that means its not a veriable assaigment.
 				{
 					Type* line = getType(str);
 					if (line == nullptr) // if the line created that means its a valid value.
 					{
-						throw(SyntaxException());
+						throw(NameErrorException(str));
 					}
 					std::cout << line->toString() << std::endl;
 					delete line;
@@ -41,6 +46,9 @@ Type* Parser::parseString(std::string str)
 			}
 			catch(NameErrorException e2){
 				throw e2;
+			}
+			catch (SyntaxException e3) {
+				throw e3;
 			}
 
 		}
@@ -153,21 +161,33 @@ bool Parser::makeAssignment(std::string str)
 
 	Type* ver = nullptr;
 	Type* isVeriable = getVariableValue(verData);
+	int isList = 0;
 
 	if (isVeriable != nullptr) // checking if the veriable data is a existing veriable, if yes we will deep copy its value.
 	{
-		ver = getType(isVeriable->toString());
+		//checking if the valuue is a list.
+		if (isVeriable->toString()[isVeriable->toString().size()-1] == ']'
+			&& isVeriable->toString()[0] == '[')
+		{
+			_veriables[verName] = isVeriable;// if its a list we will do a pointer assigning to the same ver.
+			isList = 1;
+		}
+		else {
+			ver = getType(isVeriable->toString());
+		}
 	}
 	else 
 	{// if the data isnt a veriable we will just, assign it regularly.
 		ver = getType(verData);
 		if (ver == nullptr) {
-			throw SyntaxException();
+			throw NameErrorException(verData);
 		}
 	}
 
-	delete _veriables[verName];// deleting former memory so there wont be memory leak.
-	_veriables[verName] = ver;
+	if (isList == 0) {
+		delete _veriables[verName];// deleting former memory so there wont be memory leak.
+		_veriables[verName] = ver;
+	}
 	return true;
 }
 
@@ -222,6 +242,61 @@ List* Parser::parseList(std::string str)
 	}
 
 	return newObList;
+
+}
+
+std::string Parser::getTypeOfValue(const std::string& str)
+{
+	std::string value = "";
+	// Find the position of the opening and closing parentheses
+	size_t openParenPos = str.find('(');
+	size_t closeParenPos = str.find(')');
+
+	// Create a substring before the "type()" part
+	value = str.substr(openParenPos + 1, closeParenPos - openParenPos - 1);
+
+	
+
+
+
+
+
+	//checking for the value what is type
+	if (Helper::isInteger(value) == true) {
+		return "<type 'int'>";
+	}
+	else if (Helper::isBoolean(value) == true) {
+		return "<type 'bool'>";
+	}	
+	else if (Helper::isString(value) == true) {
+		return "<type 'str'>";
+	}	
+	else if (Helper::isList(value) == true) {
+		return "<type 'list'>";
+	}
+	else {// if any of the type are suitable then its a veriable.
+		Type* valueOfVer = getVariableValue(value);
+		if (valueOfVer == nullptr) {// if not a veriable then it doesnt exists.
+			throw(NameErrorException(value));
+		}
+		else {
+			if (Helper::isInteger(valueOfVer->toString()) == true) {
+				return "<type 'int'>";
+			}
+			else if (Helper::isBoolean(valueOfVer->toString()) == true) {
+				return "<type 'bool'>";
+			}
+			else if (Helper::isString(valueOfVer->toString()) == true) {
+				return "<type 'str'>";
+			}
+			else if (Helper::isList(valueOfVer->toString()) == true) {
+				return "<type 'list'>";
+			}
+			else {
+				return "idk";
+			}
+		}
+	}
 
 }
 

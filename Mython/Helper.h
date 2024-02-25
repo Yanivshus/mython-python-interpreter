@@ -21,6 +21,8 @@ public:
 	// check if the parameter is digit
 	static bool isDigit(const char c);
 
+	static bool isType(const std::string& s);
+
 	// check if the parameter is lower letter
 	static bool isLowerLetter(const char c);	
 	
